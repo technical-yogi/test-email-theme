@@ -1,14 +1,21 @@
 <template>
   <div class="menu">
-    <router-link to="/inbox"><div class="menu__item">Inbox (3)</div></router-link>
-    <router-link to="/archive"><div class="menu__item">Archive (0)</div></router-link>
+    <router-link to="/inbox"><div class="menu__item">Inbox ({{totalInboxMails}})</div></router-link>
+    <router-link to="/archive"><div class="menu__item">Archive ({{totalArchivedMails}})</div></router-link>
     <div class="menu__item menu--bottom">Logout</div>
   </div>
 </template>
 
 <script>
 export default {
-
+  computed: {
+    totalInboxMails() {
+      return this.$store.getters.getTotalMailsInInbox;
+    },
+    totalArchivedMails() {
+      return this.$store.getters.getTotalMailsArchived;
+    }
+  }
 }
 </script>
 

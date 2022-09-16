@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="pageName">Archive</div>
-    <MailComponent />
+    <MailComponent :mails="archivedMails" />
   </div>
 </template>
 
@@ -10,6 +10,11 @@ import MailComponent from '@/components/MailComponent.vue'
 export default {
   components: {
     MailComponent
+  },
+  computed: {
+    archivedMails() {
+      return this.$store.getters.getArchivedMails;
+    }
   }
 }
 </script>

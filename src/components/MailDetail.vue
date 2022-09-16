@@ -1,18 +1,15 @@
 <template>
-  <div class="mailDetailContainer detailBox" v-if="isVisible">
+  <div class="mailDetailContainer detailBox" v-if="isVisible" @click="closeDetail()">
   <div class="detailBox__left"></div>
   <div class="detailBox__right ">
-    <div class="detail">
+    <div class="detail" id="detail" @click.stop="preventPropagation()">
         <div class="detail--close" @click="closeDetail()">Close (Esc)</div>
         <div class="action">
-            <div class="action--btn">Mark as read (r)</div>
-            <div class="action--btn">Archive (a)</div>
+            <div class="action--btn" @click="markMailRead()">Mark as read (r)</div>
+            <div class="action--btn" @click="archiveMail()">Archive (a)</div>
         </div>
-        <div class="detail--title">Lorem Ipsum is simply dummy text of </div>
-        <div class="detail--desc">Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, 
-            when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-        </div>
+        <div class="detail--title">{{mailDetail.title}}</div>
+        <div class="detail--desc">{{mailDetail.detail}}</div>
     </div>
   </div>
   </div>
@@ -29,6 +26,12 @@ export default {
         showModal: {
             type: Boolean,
             default: false
+        },
+        mailDetail: {
+            type: Object,
+            default() {
+              return {}
+            }
         }
     },
     watch: {
@@ -40,10 +43,34 @@ export default {
             }
         }
     },
+    created() {
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'r') {
+                this.markMailRead();
+            } else if (e.key === 'a') {
+                this.archiveMail();
+            } else if (e.key === 'Escape') {
+                this.closeDetail();
+            }
+        });
+    },
     methods: {
         closeDetail() {
             this.$emit('modal-closed');
             this.isVisible = false;
+        },
+        async archiveMail() {
+            let payload = [];
+            payload.push(this.mailDetail.id);
+            await this.$store.dispatch('archiveMail', payload);
+        },
+        async markMailRead() {
+            let payload = [];
+            payload.push(this.mailDetail.id);
+            await this.$store.dispatch('markRead', payload);
+        },
+        preventPropagation() {
+            // stop event propagation to close this component
         }
     }
 
@@ -52,7 +79,6 @@ export default {
 
 <style scoped>
 .mailDetailContainer{
-    z-index: 999;
     position: fixed;
     right:5px;
     left: 5px;
@@ -76,6 +102,7 @@ export default {
 .detail--close {
   text-decoration: underline;
   color: #325b8a;
+  cursor: pointer;
 }
 .action {
     display: flex;
@@ -93,13 +120,13 @@ export default {
     border: 1px solid #ccc;
 }
 .detail--title {
-    max-width: 100%;
+    width: calc(40%-60px);
     font-size: 20px;
     font-weight: bolder;
     margin: 20px 0;
 }
 .detail--desc {
-    max-width: 550px;
+    max-width: 530px;
     font-size: 14px;
     line-height: 24px;
 }

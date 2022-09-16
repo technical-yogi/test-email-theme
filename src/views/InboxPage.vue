@@ -1,7 +1,7 @@
 <template>
   <div>
    <div class="pageName">Inbox</div>
-   <MailComponent />
+   <MailComponent :mails="inboxMails" />
   </div>
 </template>
 
@@ -10,6 +10,11 @@ import MailComponent from '@/components/MailComponent.vue'
 export default {
   components: {
     MailComponent
+  },
+  computed: {
+    inboxMails() {
+      return this.$store.getters.getAllMails;
+    }
   }
 }
 </script>

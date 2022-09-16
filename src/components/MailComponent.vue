@@ -1,50 +1,91 @@
 <template>
   <div class="mailBox">
-    <div class="mailBox__title">Emails Selected (2)</div>
-    {{isArchivePage}}
+    <div class="mailBox__title">Emails Selected ({{selecteMailLength}})</div>
     <div class="mailBox__list">
-      <input type="checkbox" class="mailBox__list--checkbox">
-      <div class="mailBox__list--btn mailBox--grey">Mark as read (r)</div>
-      <div class="mailBox__list--btn mailBox--grey" v-if="showArchiveButton">Archive (a)</div>
+      <input type="checkbox" class="mailBox__list--checkbox" :checked="allMailSelected" v-model="allMailSelected">
+      <div class="mailBox__list--btn mailBox--grey" @click="markMailRead()">Mark as read (r)</div>
+      <div class="mailBox__list--btn mailBox--grey" v-if="showArchiveButton" @click="archiveMail()">Archive (a)</div>
     </div>
-    <div class="mailBox__list mailBox--grey">
-        <input type="checkbox" class="mailBox__list--checkbox">
-        <div class="mailBox__list--text" @click="showDetail()">This is first mail</div>
-    </div>
-    <div class="mailBox__list mailBox--grey">
-        <input type="checkbox" class="mailBox__list--checkbox">
-        <div class="mailBox__list--text">This is first mail</div>
-    </div>
-    <div class="mailBox__list mailBox--grey">
-        <input type="checkbox" class="mailBox__list--checkbox">
-        <div class="mailBox__list--text">This is first mail</div>
+    <div class="mailBox__list mailBox--grey" v-for="(mail, index) in mails" :key="index+1" :class="mail.isRead? 'mailBox--read' : ''">
+        <input type="checkbox" class="mailBox__list--checkbox" :id="mail.id" :value="mail.id" v-model="selectedMails">
+        <div class="mailBox__list--text" @click="showDetail(mail)">{{mail.title}}</div>
     </div>
   </div>
-  <MailDetail :showModal="openDetail" @modalClosed="detailClosed" />
+  {{mailToShowDetail}}
+  <MailDetail :showModal="openDetail" @modalClosed="detailClosed" :mailDetail="mailToShowDetail"/>
 </template>
 
 <script>
 import MailDetail from '@/components/MailDetail.vue'
 export default {
-  data() {
-    return {
-        openDetail: false
-    }
-  },
   components: {
     MailDetail
+  },
+  data() {
+    return {
+        allMailSelected: false,
+        openDetail: false,
+        mailToShowDetail: null,
+        selectedMails: []
+    }
+  },
+  props: {
+    mails: {
+        type: Array,
+        default() {
+            return []
+        }
+    }
+  },
+  watch: {
+    selectedMails() {
+        this.allMailSelected = this.selectedMails.length === this.mails.length
+    },
+    allMailSelected(value) {
+      if(value) {
+        this.selectedMails = this.mails.map(x=> x.id);
+      } else {
+        this.selectedMails = []
+      }
+    }
   },
   computed: {
     showArchiveButton(){
         return this.$route.name !== 'Archive';
+    },
+    selecteMailLength() {
+        return this.selectedMails.length;
     }
   },
+  created() {
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'r') {
+        this.markMailRead();
+      } else if (e.key === 'a') {
+        this.archiveMail();
+      }
+    });
+  },
   methods: {
-    showDetail () {
+    showDetail (mail) {
+        this.mailToShowDetail = mail;
         this.openDetail = true
     },
     detailClosed() {
+        this.mailToShowDetail = null;
         this.openDetail = false
+    },
+    async archiveMail() {
+        if(this.selectedMails.length) {
+            await this.$store.dispatch('archiveMail', this.selectedMails)
+            this.selectedMails = []
+        }
+    },
+    async markMailRead() {
+        if(this.selectedMails.length) {
+            await this.$store.dispatch('markRead', this.selectedMails)
+            this.selectedMails = []
+        }
     }
   }
 }
@@ -57,6 +98,9 @@ export default {
 }
 .mailBox--grey {
     background-color: #f5f7f7;
+}
+.mailBox--read {
+    opacity: 0.5;
 }
 .mailBox__title {
     font-size: 32px;
@@ -89,5 +133,6 @@ export default {
 .mailBox__list--text {
     font-size: 14px;
     margin-top: 7px;
+    cursor: pointer;
 }
 </style>
