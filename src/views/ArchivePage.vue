@@ -1,12 +1,16 @@
 <template>
   <div>
-    archive page
+    <div class="pageName">Archive</div>
+    <MailComponent />
   </div>
 </template>
 
 <script>
+import MailComponent from '@/components/MailComponent.vue'
 export default {
-
+  components: {
+    MailComponent
+  }
 }
 </script>
 

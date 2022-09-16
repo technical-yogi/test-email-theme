@@ -27,6 +27,7 @@ body {
   overflow-x: hidden;
   overflow-y: hidden;
   border: 5px solid black;
+  font-family: Arial, Helvetica, sans-serif;
 }
 .container {
   width: 100%;
@@ -50,5 +51,10 @@ body {
 }
 .box--white {
   background-color: white;
+}
+ /* common class for child components */
+.pageName{
+  font-size: 24px;
+  margin-bottom: 15px;
 }
 </style>

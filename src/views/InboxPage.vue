@@ -1,17 +1,19 @@
 <template>
   <div>
-    <h3>inbox page</h3>
+   <div class="pageName">Inbox</div>
+   <MailComponent />
   </div>
 </template>
 
 <script>
+import MailComponent from '@/components/MailComponent.vue'
 export default {
-
+  components: {
+    MailComponent
+  }
 }
 </script>
 
 <style>
-h3{
-  color:black;
-}
+
 </style>
