@@ -120,7 +120,7 @@ export default {
     border: 1px solid #ccc;
 }
 .detail--title {
-    width: calc(40%-60px);
+    width: 530px;
     font-size: 20px;
     font-weight: bolder;
     margin: 20px 0;
