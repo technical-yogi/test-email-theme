@@ -11,7 +11,6 @@
         <div class="mailBox__list--text" @click="showDetail(mail)">{{mail.title}}</div>
     </div>
   </div>
-  {{mailToShowDetail}}
   <MailDetail :showModal="openDetail" @modalClosed="detailClosed" :mailDetail="mailToShowDetail"/>
 </template>
 
