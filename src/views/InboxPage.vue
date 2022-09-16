@@ -1,6 +1,6 @@
 <template>
   <div>
-    inbox page
+    <h3>inbox page</h3>
   </div>
 </template>
 
@@ -11,5 +11,7 @@ export default {
 </script>
 
 <style>
-
+h3{
+  color:black;
+}
 </style>
